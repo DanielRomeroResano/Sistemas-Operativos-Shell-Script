@@ -26,13 +26,24 @@ case "$opt" in
     "1")
         echo "1. Recomendación rápida de restaurante"
         echo
-        pos1=()
-        cat rating_final.csv | cut -d "," -f3
-        tot=0
-        for linea in rating_final.csv
-        doz
-          echo $linea[1]
+        arr1=($(cat rating_final.csv | tail -n +2 | cut -d "," -f3))
+        arr2=($(cat rating_final.csv | tail -n +2 | cut -d "," -f4))
+        arr3=($(cat rating_final.csv | tail -n +2 | cut -d "," -f5))
+        tLen=${#arr1[@]}
+        #echo $tLen
+        for (( i=0; i<=$tLen; i++ ))
+        do
+          tmp=$((${arr1[i]}+${arr2[i]}+${arr3[i]}))
+          tmp=$(($tmp/3))
+          echo $tmp
+          echo
         done
+        #tot=0
+        #for linea in rating_final.csv
+        #doz
+        #  echo $linea[1]
+
+        #done
         ;;
     "2" )
         echo "2. Recomendación detallada de restaurante"
@@ -47,6 +58,7 @@ case "$opt" in
         exit
         ;;
       *)
+        exit
         ;;
 
 esac

@@ -26,27 +26,43 @@ case "$opt" in
     "1")
         echo "1. Recomendación rápida de restaurante"
         echo
-        arrId=($(cat rating_final.csv | tail -n +2 | cut -d "," -f2))
-        arr1=($(cat rating_final.csv | tail -n +2 | cut -d "," -f3))
-        arr2=($(cat rating_final.csv | tail -n +2 | cut -d "," -f4))
-        arr3=($(cat rating_final.csv | tail -n +2 | cut -d "," -f5))
-        tLen=${#arr1[@]}
-        #echo $tLen
-        for (( i=0; i<=$tLen; i++ ))
+        arrId=($(cat geoplaces2.csv | tail -n +2 | cut -d "," -f1))
+        tLen=${#arrId[@]}
+        numRest=0
+        totalNoVino=0
+        for (( i=0; i<$tLen; i++ ))
         do
-          tmp=$((${arr1[i]}+${arr2[i]}+${arr3[i]}))
-          tmp=$(($tmp/3))
+          arrRating=($(cat rating_final.csv | grep ${arrId[i]}))
+          arr1=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f3))
+          arr2=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f4))
+          arr3=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f5))
+          tLen1=${#arr1[@]}
+          tmp=0,0
+          for (( j=0; j<$tLen1; j++ ))
+          do
+            tmp=$(($tmp+${arr1[j]}))
+            tmp=$(($tmp+${arr2[j]}))
+            tmp=$(($tmp+${arr3[j]}))
+          done
+          tLen1=$(($tLen1*3))
+          tmp=$(($tmp/$tLen1))
           if [ $tmp -ge 1 ]
           then
             echo $tmp:${arrId[i]}
-            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d "," -f12))
-            if [[ $aux =~ .*'No_Alcohol_Served'.* ]]
-            then
-              echo 'guay'
-            fi
             echo
+            puntAct=0
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f12))
+            if [[ $aux =~ .*'Wine-Beer'.* ]]
+            then
+              totalNoVino=$(($totalNoVino+1))
+            fi
+            
           fi
+
+          numRest=$((1+$numRest))
         done
+        echo Numero De Restaurantes:$numRest
+        echo Total Sin Vino:$totalNoVino
         #tot=0
         #for linea in rating_final.csv
         #doz

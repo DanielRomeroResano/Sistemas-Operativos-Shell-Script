@@ -26,6 +26,7 @@ case "$opt" in
     "1")
         echo "1. Recomendación rápida de restaurante"
         echo
+        arrId=($(cat rating_final.csv | tail -n +2 | cut -d "," -f2))
         arr1=($(cat rating_final.csv | tail -n +2 | cut -d "," -f3))
         arr2=($(cat rating_final.csv | tail -n +2 | cut -d "," -f4))
         arr3=($(cat rating_final.csv | tail -n +2 | cut -d "," -f5))
@@ -35,8 +36,16 @@ case "$opt" in
         do
           tmp=$((${arr1[i]}+${arr2[i]}+${arr3[i]}))
           tmp=$(($tmp/3))
-          echo $tmp
-          echo
+          if [ $tmp -ge 1 ]
+          then
+            echo $tmp:${arrId[i]}
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d "," -f12))
+            if [[ $aux =~ .*'No_Alcohol_Served'.* ]]
+            then
+              echo 'guay'
+            fi
+            echo
+          fi
         done
         #tot=0
         #for linea in rating_final.csv

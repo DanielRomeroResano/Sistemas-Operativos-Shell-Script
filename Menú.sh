@@ -13,7 +13,23 @@ echo
 echo "5. Salir"
 echo
 echo "---------------------------------------------"
-opt=0
+#---------------------------------------------
+#-------------DEFAULT VALUES------------------
+#---------------------------------------------
+opt=0 #Option 2 choose in the main menu
+alcohol="Wine-Beer"
+price="medium"
+dress_code="casual"
+smoking_area="non-permitted"
+accessibility="completely"
+pesAlcohol=$(echo "scale=2; 0.2" | bc)  #bc 2 use decimals
+pesPrice=$(echo "scale=2; 0.4" | bc)
+pesDress=$(echo "scale=2; 0.1" | bc)
+pesSmoking=$(echo "scale=2; 0.1" | bc)
+pesAccessibility=$(echo "scale=2; 0.2" | bc)
+#---------------------------------------------
+#---------loop 2 get a valid option-----------
+#---------------------------------------------
 while [[ $opt -le 0 || $opt -gt 5 ]]; do
   echo
   echo "Introduzca una opción (1/2/3/4/5):"
@@ -23,94 +39,134 @@ done
 'clear'
 
 case "$opt" in
+
+    #-----------------------------------------------
+    #---------------Option 1-----------------------
+    #-----------------------------------------------
     "1")
         echo "1. Recomendación rápida de restaurante"
         echo
-        arrId=($(cat geoplaces2.csv | tail -n +2 | cut -d "," -f1))
-        tLen=${#arrId[@]}
+        arrId=($(cat geoplaces2.csv | tail -n +2 | cut -d "," -f1)) #get an array with all the unique ids
+        tLen=${#arrId[@]} #get the length of the array
+        #-------------------------------------------
+        #----------testing variables----------------
+        #-------------------------------------------
+        Millor=0
         numRest=0
         totalNoVino=0
-        puntuacio=()
         tp=0
-        Millor_p=0
-        Millor=0
+        #-------------------------------------------
+        #----------------init data------------------
+        #-------------------------------------------
+        puntuacio=()  #array with all the scores of the variables with rating supperior to 1
+        millor_p=0  #best score
 
-        for ((j=0; j<=130; j++))
+        #----------------------------------------------------------------------------------------------------------------------
+        #------------------------ Calculamos todas las puntuaciones de los restaurantes ---------------------------------------
+        #----------------------------------------------------------------------------------------------------------------------
+        ########################################################################################################################
+        for (( i=0; i<$tLen; i++ )) #iteramos sobre todo el array de ids unicos
         do
-          puntuacio[j]=0
-
-        done
-        for (( i=0; i<$tLen; i++ ))
-        do
-          arrRating=($(cat rating_final.csv | grep ${arrId[i]}))
-          arr1=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f3))
-          arr2=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f4))
-          arr3=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f5))
-          tLen1=${#arr1[@]}
-          tmp=0,0
-          for (( j=0; j<$tLen1; j++ ))
+          arrRating=($(cat rating_final.csv | grep ${arrId[i]}))  #nos quedamos con todas las valoraciones del restaurante acual
+          arr1=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f3)) #cogemos la primera columna de datos
+          arr2=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f4)) #idem 2a
+          arr3=($(cat rating_final.csv | grep ${arrId[i]} | tail -n +2 | cut -d "," -f5)) #idem 3a
+          tLen1=${#arr1[@]} #miramos cuantas valoraciones hay
+          tmp=$(echo "scale=2; 0.0" | bc) #inicializamos el rating a calcular a 0
+          for (( j=0; j<$tLen1; j++ ))  #iteramos sobre cada valoración
           do
-            tmp=$(($tmp+${arr1[j]}))
+            tmp=$(($tmp+${arr1[j]}))  #sumamos las 3 columnas de la valoración
             tmp=$(($tmp+${arr2[j]}))
             tmp=$(($tmp+${arr3[j]}))
           done
-          tLen1=$(($tLen1*3))
+          tLen1=$(($tLen1*3)) #hacemos la media de la puntuacion del restaurante actual
           tmp=$(($tmp/$tLen1))
-          if [ $tmp -ge 1 ]
+          if [ $tmp -ge 1 ] #miramos si el rating es mayor a 1
           then
-            echo Id_Rest: ${arrId[i]}
+            #echo Id_Rest: ${arrId[i]}
 
-            puntAct=0
-            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f12))
-            if [[ $aux =~ .*'Wine-Beer'.* ]]
+            puntAct=0 #inicializamos la puntuacion segun los parametros a 0
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f12)) #cogemos el dato a comprobar
+            if [[ $aux =~ .*'Wine-Beer'.* ]]  #miramos si es igual al parametro
             then
-              puntuacio[i]=$((${puntuacio[i]} + 2))
+              puntAct=$((puntAct+2))  #sumamos el peso correspondiente
 
             fi
-            aux1=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f13))
-            if [[ $aux1  =~ .*'none'.* ]] || [[$aux1  =~ .*'not-permitted'.* ]]
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f13))
+            if [[ $aux  =~ .*'none'.* ]] || [[ $aux  =~ .*'not-permitted'.* ]]
             then
 
-              puntuacio[i]=$((${puntuacio[i]} + 1))
+              puntAct=$((puntAct+1))
 
             fi
-            aux2=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f14))
-            if [[ $aux2  =~ .*'informal'.* ]] || [[$aux2  =~ .*'casual'.*]]
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f14))
+            if [[ $aux  =~ .*'informal'.* ]] || [[ $aux  =~ .*'casual'.* ]]
             then
 
-              puntuacio[i]=$((${puntuacio[i]} + 1))
+              puntAct=$((puntAct+1))
 
             fi
-            aux3=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f15))
-            if [[ $aux3  =~ .*'partially'.* ]] || [[$aux3  =~ .*'completely'.*]]
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f15))
+            if [[ $aux  =~ .*'partially'.* ]] || [[ $aux  =~ .*'completely'.* ]]
             then
 
-              puntuacio[i]=$((${puntuacio[i]} + 2))
+              puntAct=$((puntAct+2))
 
             fi
-            aux4=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f16))
-            if [[ $aux4 =~ .*'medium'.* ]]
+            aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f16))
+            if [[ $aux =~ .*'medium'.* ]]
             then
-              puntuacio[i]=$((${puntuacio[i]} + 4))
+              puntAct=$((puntAct+4))
 
             fi
-            echo Puntuacio_Rest: ${puntuacio[i]}
-            echo
-            echo
-            echo
+            puntuacio[i]=$puntAct #añadimos la puntuación actual al array de puntuaciones
+            #echo Puntuacio_Rest: ${puntuacio[i]}
             if [[ ${puntuacio[i]} -gt  $millor_p ]]
             then
             millor_p=${puntuacio[i]}
-            Millor=${arrId[i]}
-            echo tes
+            #Millor=${arrId[i]}
             fi
+          else  #si el rating es menor a 1 asignamos arbitrariamente -1 a
+                #la puntuacion para distinguir el restaurante de los que superan el rating (solo para testing)
+            puntuacio[i]=-1
           fi
 
-          numRest=$((1 + $numRest))
-        done
+          numRest=$((1 + $numRest)) #sumamos 1 al numero de Restaurantes añadidos al array de puntuaciones
+
+        done  #final del bucle que itera sobre todos los ids
+        ###################################################################################################################
+
+        #-----------testing Prints----------
         echo $Millor, $millor_p
         echo Numero De Restaurantes:$numRest
         echo Total Sin Vino:$totalNoVino
+        echo TotalRest: $tLen
+        tLenPunt=${#puntuacio[@]}
+        echo LenPuntuacio: $tLenPunt
+
+        #-------------------------------------------------
+        #------------Buscar Mejores Puntuaciones----------
+        #-------------------------------------------------
+
+        arrMillorsIds=()  #creamos un array donde guardar las ids de los restaurantes con mayor puntuación
+        id=0  #creamos un iterador que ir incrementando cada vez que insertemos
+        for (( i=0; i<$tLenPunt; i++ )) #iteramos sobre todas las ids
+        do
+          if [[ ${puntuacio[i]} -eq $millor_p ]]  #si su puntuacion es igual a la mayor
+          then
+            arrMillorsIds[id]=${arrId[i]}         #insertamos el valor al array
+            id=$(($id+1))
+          fi
+        done
+
+        echo
+        echo "Viva Jhon Bon Jovi"
+        echo
+        echo ${arrMillorsIds[@]}
+
+        randomRestId=$(( RANDOM % $id ))  #nos quedamos con un elemento aleatorio del array 
+        echo
+        echo randChoice: $randomRestId
         #tot=0
         #for linea in rating_final.csv
         #doz

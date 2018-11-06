@@ -137,12 +137,12 @@ case "$opt" in
         ###################################################################################################################
 
         #-----------testing Prints----------
-        echo $Millor, $millor_p
-        echo Numero De Restaurantes:$numRest
-        echo Total Sin Vino:$totalNoVino
-        echo TotalRest: $tLen
+        #echo $Millor, $millor_p
+        #echo Numero De Restaurantes:$numRest
+        #echo Total Sin Vino:$totalNoVino
+        #echo TotalRest: $tLen
         tLenPunt=${#puntuacio[@]}
-        echo LenPuntuacio: $tLenPunt
+        #echo LenPuntuacio: $tLenPunt
 
         #-------------------------------------------------
         #------------Buscar Mejores Puntuaciones----------
@@ -160,13 +160,20 @@ case "$opt" in
         done
 
         echo
-        echo "Viva Jhon Bon Jovi"
+        #echo "Viva Jhon Bon Jovi"
         echo
-        echo ${arrMillorsIds[@]}
+        #echo ${arrMillorsIds[@]}
 
-        randomRestId=$(( RANDOM % $id ))  #nos quedamos con un elemento aleatorio del array 
+        randomRestId=$(( RANDOM % $id ))  #nos quedamos con un elemento aleatorio del array
         echo
-        echo randChoice: $randomRestId
+        #echo randChoice: $randomRestId
+
+        #echo $randomRestId
+        millor_p=$(($millor_p/10))
+
+        echo Recomendacio de restaurant : $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f5), $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f12), $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f13),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f14),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f15),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f16)
+        echo
+        echo
         #tot=0
         #for linea in rating_final.csv
         #doz

@@ -17,11 +17,16 @@ echo "---------------------------------------------"
 #-------------DEFAULT VALUES------------------
 #---------------------------------------------
 opt=0 #Option 2 choose in the main menu
-alcohol="Wine-Beer"
-price="medium"
-dress_code="casual"
-smoking_area="non-permitted"
-accessibility="completely"
+alcohol=("Wine-Beer")
+tLenAlcohol=${#alcohol[@]}
+price=("medium")
+tLenPrice=${#price[@]}
+dress_code=("casual" "informal")
+tLenDressCode=${#dress_code[@]}
+smoking_area=("not-permitted" "none")
+tLenSmoking=${#smoking_area[@]}
+accessibility=("completely" "partially")
+tLenAccesibility=${#accessibility[@]}
 pesAlcohol=$(echo "scale=2; 0.2" | bc)  #bc 2 use decimals
 pesPrice=$(echo "scale=2; 0.4" | bc)
 pesDress=$(echo "scale=2; 0.1" | bc)
@@ -87,38 +92,50 @@ case "$opt" in
 
             puntAct=0 #inicializamos la puntuacion segun los parametros a 0
             aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f12)) #cogemos el dato a comprobar
-            if [[ $aux =~ .*'Wine-Beer'.* ]]  #miramos si es igual al parametro
-            then
-              puntAct=$((puntAct+2))  #sumamos el peso correspondiente
-
-            fi
+            for (( a=0; a<$tLenAlcohol; a++ ))
+            do
+              if [[ $aux =~ .*${alcohol[a]}.* ]]  #miramos si es igual al parametro
+              then
+                puntAct=$((puntAct+2))  #sumamos el peso correspondiente
+                break
+              fi
+            done
             aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f13))
-            if [[ $aux  =~ .*'none'.* ]] || [[ $aux  =~ .*'not-permitted'.* ]]
-            then
-
-              puntAct=$((puntAct+1))
-
-            fi
+            for (( a=0; a<$tLenSmoking; a++ ))
+            do
+              if [[ $aux =~ .*${smoking_area[a]}.* ]]
+              then
+                puntAct=$((puntAct+1))
+                break
+              fi
+            done
             aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f14))
-            if [[ $aux  =~ .*'informal'.* ]] || [[ $aux  =~ .*'casual'.* ]]
-            then
-
-              puntAct=$((puntAct+1))
-
-            fi
+            for (( a=0; a<$tLenDressCode; a++ ))
+            do
+              if [[ $aux =~ .*${dress_code[a]}.* ]]
+              then
+                puntAct=$((puntAct+1))
+                break
+              fi
+            done
             aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f15))
-            if [[ $aux  =~ .*'partially'.* ]] || [[ $aux  =~ .*'completely'.* ]]
-            then
-
-              puntAct=$((puntAct+2))
-
-            fi
+            for (( a=0; a<$tLenAccesibility; a++ ))
+            do
+              if [[ $aux =~ .*${accessibility[a]}.* ]]
+              then
+                puntAct=$((puntAct+2))
+                break
+              fi
+            done
             aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f16))
-            if [[ $aux =~ .*'medium'.* ]]
-            then
-              puntAct=$((puntAct+4))
-
-            fi
+            for (( a=0; a<$tLenPrice; a++ ))
+            do
+              if [[ $aux =~ .*${price[a]}.* ]]
+              then
+                puntAct=$((puntAct+4))
+                break
+              fi
+            done
             puntuacio[i]=$puntAct #añadimos la puntuación actual al array de puntuaciones
             #echo Puntuacio_Rest: ${puntuacio[i]}
             if [[ ${puntuacio[i]} -gt  $millor_p ]]
@@ -162,7 +179,7 @@ case "$opt" in
         echo
         #echo "Viva Jhon Bon Jovi"
         echo
-        #echo ${arrMillorsIds[@]}
+        echo ${arrMillorsIds[@]}
 
         randomRestId=$(( RANDOM % $id ))  #nos quedamos con un elemento aleatorio del array
         echo
@@ -170,7 +187,6 @@ case "$opt" in
 
         #echo $randomRestId
         millor_p=$(($millor_p/10))
-
         echo Recomendacio de restaurant : $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f5), $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f12), $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f13),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f14),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f15),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f16)
         echo
         echo

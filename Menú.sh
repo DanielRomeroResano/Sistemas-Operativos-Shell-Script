@@ -35,7 +35,8 @@ pesAccessibility=$(echo "scale=2; 0.2" | bc)
 #---------------------------------------------
 #---------loop 2 get a valid option-----------
 #---------------------------------------------
-while [[ $opt -le 0 || $opt -gt 5 ]]; do
+while [[ $opt -le 0 || $opt -gt 5 ]];
+do
   echo
   echo "Introduzca una opción (1/2/3/4/5):"
   read opt
@@ -147,7 +148,6 @@ case "$opt" in
                 #la puntuacion para distinguir el restaurante de los que superan el rating (solo para testing)
             puntuacio[i]=-1
           fi
-
           numRest=$((1 + $numRest)) #sumamos 1 al numero de Restaurantes añadidos al array de puntuaciones
 
         done  #final del bucle que itera sobre todos los ids
@@ -199,9 +199,62 @@ case "$opt" in
         ;;
     "2" )
         echo "2. Recomendación detallada de restaurante"
+        echo
+        echo "Indique valores para price[M,L,H]: "
+        resuesta="def"
+        arrChar=()
+        read resuesta
+        read -ra arrChar -d ',' <<<"$resuesta"
+        #while [[ $caracter != "M" || $caracter != "L" || $caracter != "H" ]]
+
+        echo "respuesta: "${arrChar[@]}
+
+        while [[ $caracter != "M" && $caracter != "L" && $caracter != "H" ]]
+        do
+          echo "Valor introducido incorrecto, vuelva a introducirlo: "
+          read -n 1 caracter
+        done
+        case "$opt" in
+          "M")
+            ;;
+          "L")
+            ;;
+          "H")
+            ;;
+          *)
+            ;;
+        esac
         ;;
     "3")
         echo "3. Consultar parámetros recomendación"
+        echo
+        echo "-------------"
+        echo
+        echo "Peso precio: 0"$pesPrice
+        echo
+        echo "Peso somking area: 0"$pesSmoking
+        echo
+        echo "Peso alcohol: 0"$pesAlcohol
+        echo
+        echo "Peso dress code: 0"$pesDress
+        echo
+        echo "Peso accessibility: 0"$pesAccessibility
+        echo
+        echo "-------------"
+        echo
+        echo "Precios: "${price[@]}
+        echo
+        echo "Smoking areas: "${smoking_area[@]}
+        echo
+        echo "Alcohol services: " ${alcohol[@]}
+        echo
+        echo "Dress codes: "${dress_code[@]}
+        echo
+        echo "Accesibilities: "${accessibiltLenPrice=${#price[@]}ity[@]}
+        echo
+        read -n 1 -s -r -p "Presione cualquier tecla para continuar"
+        echo
+
         ;;
     "4" )
         echo "4. Ajustar parámetros recomendación"

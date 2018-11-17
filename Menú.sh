@@ -26,7 +26,6 @@ pesAccessibility=$(echo "scale=2; 0.2" | bc)
 
 
 
-
 ##########################################################################################################################
 #################### RECOMEND RESTAURANT FUNCTION ########################################################################
 ##########################################################################################################################
@@ -183,6 +182,8 @@ function recomendarRestaurante {
 
 
 
+
+
 ##########################################################################################################################
 ################## CHANGE VALUES FUNCTION ########################################################################
 ##########################################################################################################################
@@ -249,6 +250,263 @@ function cambiarValores {
         ;;
     esac
   done
+  tLenPrice=${#price[@]}
+  #------------------dress_code----------------------------------------
+  echo "Indique valores para dress_code[I,C,F]: "
+  resuesta="def"
+  arrChar=()
+  read resuesta
+  IFS=',' read -ra arrChar <<< "$resuesta"
+  tLenArrChar=${#arrChar[@]}
+  #echo "respuesta: "$tLenArrChar
+  correcte=1
+  if [ $tLenArrChar -le 0 ]
+  then
+    correcte=0
+  fi
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+
+    if [ ${arrChar[el]} != "I" ] && [ ${arrChar[el]} != "C" ] && [ ${arrChar[el]} != "F" ]
+    then
+      correcte=0
+    fi
+  done
+  while [[ $correcte == 0 ]]
+  do
+    echo "Valor introducido incorrecto, vuelva a introducir valores: "
+    resuesta="def"
+    arrChar=()
+    read resuesta
+    IFS=',' read -ra arrChar <<< "$resuesta"
+    tLenArrChar=${#arrChar[@]}
+    echo "respuesta: "$tLenArrChar
+    correcte=1
+    if [ $tLenArrChar -le 0 ]
+    then
+      correcte=0
+    fi
+    for (( el=0; el<$tLenArrChar; el++ ))
+    do
+
+      if [ ${arrChar[el]} != "I" ] && [ ${arrChar[el]} != "C" ] && [ ${arrChar[el]} != "F" ]
+      then
+        correcte=0
+      fi
+    done #endfor
+  done  #endWhile
+  dress_code=()
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+    case "${arrChar[el]}" in
+      "I")
+        dress_code[el]="informal"
+        ;;
+      "C")
+        dress_code[el]="casual"
+        ;;
+      "F")
+        dress_code[el]="formal"
+        ;;
+      *)
+        ;;
+    esac
+  done
+  tLenDressCode=${#dress_code[@]}
+  #------------------Alcohol----------------------------------------
+  echo "Indique valores para alcohol[N,W,F]: "
+  resuesta="def"
+  arrChar=()
+  read resuesta
+  IFS=',' read -ra arrChar <<< "$resuesta"
+  tLenArrChar=${#arrChar[@]}
+  #echo "respuesta: "$tLenArrChar
+  correcte=1
+  if [ $tLenArrChar -le 0 ]
+  then
+    correcte=0
+  fi
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+
+    if [ ${arrChar[el]} != "N" ] && [ ${arrChar[el]} != "W" ] && [ ${arrChar[el]} != "F" ]
+    then
+      correcte=0
+    fi
+  done
+  while [[ $correcte == 0 ]]
+  do
+    echo "Valor introducido incorrecto, vuelva a introducir valores: "
+    resuesta="def"
+    arrChar=()
+    read resuesta
+    IFS=',' read -ra arrChar <<< "$resuesta"
+    tLenArrChar=${#arrChar[@]}
+    echo "respuesta: "$tLenArrChar
+    correcte=1
+    if [ $tLenArrChar -le 0 ]
+    then
+      correcte=0
+    fi
+    for (( el=0; el<$tLenArrChar; el++ ))
+    do
+
+      if [ ${arrChar[el]} != "N" ] && [ ${arrChar[el]} != "W" ] && [ ${arrChar[el]} != "F" ]
+      then
+        correcte=0
+      fi
+    done #endfor
+  done  #endWhile
+  tLenAlcohol=()
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+    case "${arrChar[el]}" in
+      "N")
+
+        alcohol[el]="No_Alcohol_Served"
+        ;;
+      "W")
+        alcohol[el]="Wine-Beer"
+        ;;
+      "F")
+        alcohol[el]="Full_Bar"
+        ;;
+      *)
+        ;;
+    esac
+  done
+  tLenAlcohol=${#alcohol[@]}
+  #------------------Smoking Area----------------------------------------
+  echo "Indique valores para smoking_area[O,B,P,S,N]: "
+  resuesta="def"
+  arrChar=()
+  read resuesta
+  IFS=',' read -ra arrChar <<< "$resuesta"
+  tLenArrChar=${#arrChar[@]}
+  #echo "respuesta: "$tLenArrChar
+  correcte=1
+  if [ $tLenArrChar -le 0 ]
+  then
+    correcte=0
+  fi
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+
+    if [ ${arrChar[el]} != "0" ] && [ ${arrChar[el]} != "B" ] && [ ${arrChar[el]} != "P" ] && [ ${arrChar[el]} != "S" ] && [ ${arrChar[el]} != "N" ]
+    then
+      correcte=0
+    fi
+  done
+  while [[ $correcte == 0 ]]
+  do
+    echo "Valor introducido incorrecto, vuelva a introducir valores: "
+    resuesta="def"
+    arrChar=()
+    read resuesta
+    IFS=',' read -ra arrChar <<< "$resuesta"
+    tLenArrChar=${#arrChar[@]}
+    echo "respuesta: "$tLenArrChar
+    correcte=1
+    if [ $tLenArrChar -le 0 ]
+    then
+      correcte=0
+    fi
+    for (( el=0; el<$tLenArrChar; el++ ))
+    do
+
+      if [ ${arrChar[el]} != "0" ] && [ ${arrChar[el]} != "B" ] && [ ${arrChar[el]} != "P" ] && [ ${arrChar[el]} != "S" ] && [ ${arrChar[el]} != "N" ]
+      then
+        correcte=0
+      fi
+    done #endfor
+  done  #endWhile
+  smoking_area=()
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+    case "${arrChar[el]}" in
+      "0")
+        smoking_area[el]="none"
+        ;;
+      "B")
+        smoking_area[el]="only at bar"
+        ;;
+      "P")
+        smoking_area[el]="permitted"
+        ;;
+      "S")
+        smoking_area[el]="section"
+        ;;
+      "N")
+        smoking_area[el]="not-permitted"
+        ;;
+      *)
+        ;;
+    esac
+  done
+  tLenSmoking=${#smoking_area[@]}
+  #------------------Accesibility ----------------------------------------
+  echo "Indique valores para accessibility[N,P,C]: "
+  resuesta="def"
+  arrChar=()
+  read resuesta
+  IFS=',' read -ra arrChar <<< "$resuesta"
+  tLenArrChar=${#arrChar[@]}
+  #echo "respuesta: "$tLenArrChar
+  correcte=1
+  if [ $tLenArrChar -le 0 ]
+  then
+    correcte=0
+  fi
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+
+    if [ ${arrChar[el]} != "N" ] && [ ${arrChar[el]} != "P" ] && [ ${arrChar[el]} != "C" ]
+    then
+      correcte=0
+    fi
+  done
+  while [[ $correcte == 0 ]]
+  do
+    echo "Valor introducido incorrecto, vuelva a introducir valores: "
+    resuesta="def"
+    arrChar=()
+    read resuesta
+    IFS=',' read -ra arrChar <<< "$resuesta"
+    tLenArrChar=${#arrChar[@]}
+    echo "respuesta: "$tLenArrChar
+    correcte=1
+    if [ $tLenArrChar -le 0 ]
+    then
+      correcte=0
+    fi
+    for (( el=0; el<$tLenArrChar; el++ ))
+    do
+
+      if [ ${arrChar[el]} != "N" ] && [ ${arrChar[el]} != "P" ] && [ ${arrChar[el]} != "C" ]
+      then
+        correcte=0
+      fi
+    done #endfor
+  done  #endWhile
+  accessibility=()
+  for (( el=0; el<$tLenArrChar; el++ ))
+  do
+    case "${arrChar[el]}" in
+      "N")
+
+        accessibility[el]="no_accessibility"
+        ;;
+      "P")
+        accessibility[el]="low"
+        ;;
+      "C")
+        accessibility[el]="partially"
+        ;;
+      *)
+        ;;
+    esac
+  done
+  tLenAccesibility=${#accessibility[@]}
 }
 ################ END CHANGE VALUES FUNCTION ###############################################################################
 

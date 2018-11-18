@@ -43,7 +43,7 @@ function recomendarRestaurante {
   #----------------init data------------------
   #-------------------------------------------
   puntuacio=()  #array with all the scores of the variables with rating supperior to 1
-  millor_p=0  #best score
+  millor_p=$(echo "scale=2; 0.0" | bc)  #best score
 
   #----------------------------------------------------------------------------------------------------------------------
   #------------------------ Calculamos todas las puntuaciones de los restaurantes ---------------------------------------
@@ -69,13 +69,13 @@ function recomendarRestaurante {
     then
       #echo Id_Rest: ${arrId[i]}
 
-      puntAct=0 #inicializamos la puntuacion segun los parametros a 0
+      puntAct=$(echo "scale=2; 0.0" | bc) #inicializamos la puntuacion segun los parametros a 0
       aux=($(cat geoplaces2.csv | grep ${arrId[i]} | cut -d  "," -f12)) #cogemos el dato a comprobar
       for (( a=0; a<$tLenAlcohol; a++ ))
       do
         if [[ $aux =~ .*${alcohol[a]}.* ]]  #miramos si es igual al parametro
         then
-          puntAct=$((puntAct+2))  #sumamos el peso correspondiente
+          puntAct=$(echo $pesAlcohol+$puntAct | bc)
           break
         fi
       done
@@ -84,7 +84,7 @@ function recomendarRestaurante {
       do
         if [[ $aux =~ .*${smoking_area[a]}.* ]]
         then
-          puntAct=$((puntAct+1))
+          puntAct=$(echo $pesSmoking+$puntAct | bc)
           break
         fi
       done
@@ -93,7 +93,7 @@ function recomendarRestaurante {
       do
         if [[ $aux =~ .*${dress_code[a]}.* ]]
         then
-          puntAct=$((puntAct+1))
+          puntAct=$(echo $pesDress+$puntAct | bc)
           break
         fi
       done
@@ -102,7 +102,7 @@ function recomendarRestaurante {
       do
         if [[ $aux =~ .*${accessibility[a]}.* ]]
         then
-          puntAct=$((puntAct+2))
+          puntAct=$(echo $pesAccessibility+$puntAct | bc)
           break
         fi
       done
@@ -111,20 +111,22 @@ function recomendarRestaurante {
       do
         if [[ $aux =~ .*${price[a]}.* ]]
         then
-          puntAct=$((puntAct+4))
+          puntAct=$(echo $pesPrice+$puntAct | bc)
           break
         fi
       done
       puntuacio[i]=$puntAct #añadimos la puntuación actual al array de puntuaciones
-      #echo Puntuacio_Rest: ${puntuacio[i]}
-      if [[ ${puntuacio[i]} -gt  $millor_p ]]
+      #echo Puntuacio_Rest: ${puntuacio[i]},$millor_p
+      cmp=$(echo ${puntuacio[i]}'>='$millor_p | bc -l)
+      if [[ $cmp == 1 ]]
       then
+      #echo entra
       millor_p=${puntuacio[i]}
       #Millor=${arrId[i]}
       fi
     else  #si el rating es menor a 1 asignamos arbitrariamente -1 a
           #la puntuacion para distinguir el restaurante de los que superan el rating (solo para testing)
-      puntuacio[i]=-1
+      puntuacio[i]=$(echo "scale=2; -1.0" | bc)
     fi
     numRest=$((1 + $numRest)) #sumamos 1 al numero de Restaurantes añadidos al array de puntuaciones
 
@@ -147,7 +149,8 @@ function recomendarRestaurante {
   id=0  #creamos un iterador que ir incrementando cada vez que insertemos
   for (( i=0; i<$tLenPunt; i++ )) #iteramos sobre todas las ids
   do
-    if [[ ${puntuacio[i]} -eq $millor_p ]]  #si su puntuacion es igual a la mayor
+    cmp=$(echo ${puntuacio[i]}'>='$millor_p | bc -l)
+    if [[ $cmp == 1 ]]  #si su puntuacion es igual a la mayor
     then
       arrMillorsIds[id]=${arrId[i]}         #insertamos el valor al array
       id=$(($id+1))
@@ -163,7 +166,9 @@ function recomendarRestaurante {
   #echo randChoice: $randomRestId
 
   #echo $randomRestId
-  millor_p=$(($millor_p/10))
+  #millor_p=$(($millor_p/10))
+  #echo ${puntuacio[@]}
+  #echo Millor:$millor_p
   echo Recomendacio de restaurant : $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f5), $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f12), $(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f13),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f14),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f15),$(cat geoplaces2.csv | grep ${arrMillorsIds[randomRestId]} | cut -d "," -f16)
 }
 ####################### END RECOMEND RESTAURANT FUNCTION ###############################################################################################
@@ -618,6 +623,24 @@ do
           ;;
       "4" )
           echo "4. Ajustar parámetros recomendación"
+          echo
+          cambiarValores
+          echo "Indique nuevo peso para price:"
+          read aux
+          pesPrice=$(echo "scale=2; $aux" | bc)
+          echo $pesPrice
+          echo "Indique nuevo peso para smoking areas:"
+          read aux
+          pesSmoking=$(echo "scale=2; $aux" | bc)
+          echo "Indique nuevo peso para alcohol:"
+          read aux
+          pesAlcohol=$(echo "scale=2; $aux" | bc)
+          echo "Indique nuevo peso para dress code:"
+          read aux
+          pesDress=$(echo "scale=2; $aux" | bc)
+          echo "Indique nuevo peso para accessibility:"
+          read aux
+          pesAccessibility=$(echo "scale=2; $aux" | bc)
           read -n 1 -s -r -p "Presione cualquier tecla para continuar"
           ;;
       "5")
